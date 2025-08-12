@@ -11,31 +11,24 @@ const observer = new MutationObserver((mutations) => {
       // Find all elements that might be a location link.
       // The selector 'div[data-chip-type="LOCATION"]' is a good starting point,
       // but it might need to be adjusted if Google's UI changes.
-      const locationElements = document.querySelectorAll(
-        'div[data-chip-type="LOCATION"]'
-      );
-
-      locationElements.forEach((element) => {
-        // If the element already contains an anchor tag, it means we've already
-        // processed it, so we can skip.
-        if (element.querySelector("a")) {
-          return;
-        }
-
-        const locationText = element.textContent.trim();
-        if (locationText) {
-          // Create a new anchor element.
-          const link = document.createElement("a");
-          link.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-            locationText
-          )}`;
-          link.target = "_blank"; // Opens in a new tab.
-          link.rel = "noopener noreferrer"; // Security best practice.
-          link.textContent = locationText;
-
-          // Replace the original div's content with the new link.
-          element.innerHTML = "";
-          element.appendChild(link);
+      document.querySelectorAll("div[data-text]").forEach((div) => {
+        // Look for a span with "Location:" text inside this div
+        const span = Array.from(div.querySelectorAll("span")).find(
+          (s) => s.textContent && s.textContent.includes("Location:")
+        );
+        if (span) {
+          const locationText = div.getAttribute("data-text");
+          if (locationText && !div.querySelector("a")) {
+            const link = document.createElement("a");
+            link.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              locationText
+            )}`;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = locationText;
+            div.innerHTML = "";
+            div.appendChild(link);
+          }
         }
       });
     }
