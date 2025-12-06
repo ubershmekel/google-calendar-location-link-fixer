@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Google Calendar Location Link Fixer",
-  "description": "Opens Google Calendar location links in a new tab.",
+  "description": "Opens Google Calendar location links in Google Maps in a new tab.",
   "version": "0.9",
   "icons": {
     "128": "icon128.png"
