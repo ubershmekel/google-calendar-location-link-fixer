@@ -1,6 +1,9 @@
 ﻿// A MutationObserver is used to watch for changes in the DOM.
 // This is necessary because the event details popup is dynamically added.
 let lastRun = new Date().getTime();
+
+const markerString = "gcllf-buttons-added";
+
 const observer = new MutationObserver((mutations) => {
   // limit to once per 200ms
   const now = new Date().getTime();
@@ -21,29 +24,42 @@ function processDiv(dataDiv) {
   // Calendar was overwriting the changes sometimes.
   setTimeout(() => {
     const locationText = dataDiv.getAttribute("data-text");
-    if (!locationText || dataDiv.querySelector("a")) return;
+    if (!locationText || dataDiv.querySelector("." + markerString)) return;
+
+    const encodedLocation = encodeURIComponent(locationText);
+    const href = `https://www.google.com/maps/search/?api=1&query=${encodedLocation}`;
+
+    const locationTextEl = document.createElement("div");
+    locationTextEl.textContent = locationText;
 
     const link = document.createElement("a");
-    link.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-      locationText
-    )}`;
-
+    link.href = href;
     // Open in a new  tab
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-
     // Show the user that this was updated to a regular link
-    link.textContent = `🔗 ${locationText}`;
-
+    link.textContent = locationText;
     // Prevent the parent div onclick from happening so it won't open the sidebar
     link.addEventListener("click", function (e) {
-      // Don't let the div's click handler run
       e.stopPropagation();
       // No preventDefault() so the link still opens
     });
 
+    const linkButton = document.createElement("button");
+    linkButton.type = "button";
+    linkButton.classList.add(markerString);
+    linkButton.textContent = "↗️";
+    linkButton.setAttribute("aria-label", "Open location in Google Maps");
+    linkButton.style.marginRight = "0.35em";
+    linkButton.style.cursor = "pointer";
+    linkButton.addEventListener("click", function (e) {
+      e.stopPropagation();
+      window.open(href, "_blank");
+    });
+
     const copyButton = document.createElement("button");
     copyButton.type = "button";
+    copyButton.classList.add(markerString);
     copyButton.textContent = "📋";
     copyButton.setAttribute("aria-label", "Copy location to clipboard");
     copyButton.style.marginLeft = "0.35em";
@@ -61,8 +77,10 @@ function processDiv(dataDiv) {
     });
 
     dataDiv.innerHTML = "";
-    dataDiv.appendChild(link);
+    dataDiv.appendChild(locationTextEl);
+    dataDiv.appendChild(linkButton);
     dataDiv.appendChild(copyButton);
+    // dataDiv.appendChild(link);
   }, 100);
 }
 
