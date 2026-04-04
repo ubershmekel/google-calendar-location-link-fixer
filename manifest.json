@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Google Calendar Location Link Fixer",
-  "description": "Google Calendar location links get a copy button and a button that opens Google Maps in a new tab.",
+  "description": "Adds buttons to Google Calendar event locations to open in Google Maps or copy the address.",
   "version": "1.0",
   "icons": {
     "128": "icon128.png"
