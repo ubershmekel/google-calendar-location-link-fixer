@@ -26,35 +26,45 @@ function processDiv(dataDiv) {
     const locationText = dataDiv.getAttribute("data-text");
     if (!locationText || dataDiv.querySelector("." + markerString)) return;
 
+    // If the location is itself a link, open it directly instead of
+    // searching Google Maps for the URL.
+    const locationUrl = parseHttpUrl(locationText);
     const encodedLocation = encodeURIComponent(locationText);
-    const href = `https://www.google.com/maps/search/?api=1&query=${encodedLocation}`;
+    const href =
+      locationUrl ||
+      `https://www.google.com/maps/search/?api=1&query=${encodedLocation}`;
 
     const locationTextEl = document.createElement("div");
-    locationTextEl.textContent = locationText;
-
-    const link = document.createElement("a");
-    link.href = href;
-    // Open in a new  tab
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    // Show the user that this was updated to a regular link
-    link.textContent = locationText;
-    // Prevent the parent div onclick from happening so it won't open the sidebar
-    link.addEventListener("click", function (e) {
-      e.stopPropagation();
-      // No preventDefault() so the link still opens
-    });
+    if (locationUrl) {
+      const link = document.createElement("a");
+      link.href = href;
+      // Open in a new tab
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = locationText;
+      // Prevent the parent div onclick from happening so it won't open the sidebar
+      link.addEventListener("click", function (e) {
+        e.stopPropagation();
+        // No preventDefault() so the link still opens
+      });
+      locationTextEl.appendChild(link);
+    } else {
+      locationTextEl.textContent = locationText;
+    }
 
     const linkButton = document.createElement("button");
     linkButton.type = "button";
     linkButton.classList.add(markerString);
     linkButton.textContent = "↗️";
-    linkButton.setAttribute("aria-label", "Open location in Google Maps");
+    linkButton.setAttribute(
+      "aria-label",
+      locationUrl ? "Open location link" : "Open location in Google Maps"
+    );
     linkButton.style.marginRight = "0.35em";
     linkButton.style.cursor = "pointer";
     linkButton.addEventListener("click", function (e) {
       e.stopPropagation();
-      window.open(href, "_blank");
+      window.open(href, "_blank", "noopener,noreferrer");
     });
 
     const copyButton = document.createElement("button");
@@ -80,8 +90,19 @@ function processDiv(dataDiv) {
     dataDiv.appendChild(locationTextEl);
     dataDiv.appendChild(linkButton);
     dataDiv.appendChild(copyButton);
-    // dataDiv.appendChild(link);
   }, 100);
+}
+
+// Returns the normalized URL if the whole text is a single http(s) link,
+// otherwise null.
+function parseHttpUrl(text) {
+  const trimmed = text.trim();
+  if (!/^https?:\/\/\S+$/i.test(trimmed)) return null;
+  try {
+    return new URL(trimmed).href;
+  } catch (e) {
+    return null;
+  }
 }
 
 function fallbackCopy(text) {
