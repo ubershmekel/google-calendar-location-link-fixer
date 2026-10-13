@@ -2,20 +2,28 @@
   "manifest_version": 3,
   "name": "Google Calendar Location Link Fixer",
   "description": "Adds buttons to Google Calendar event locations to open in Google Maps or copy the address.",
-  "version": "1.0",
+  "version": "1.0.1",
   "icons": {
     "128": "icon128.png"
   },
   "content_scripts": [
     {
-      "matches": ["https://calendar.google.com/*"],
-      "js": ["content.js"]
+      "matches": [
+        "https://calendar.google.com/*"
+      ],
+      "js": [
+        "content.js"
+      ]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["icon128.png"],
-      "matches": ["https://calendar.google.com/*"]
+      "resources": [
+        "icon128.png"
+      ],
+      "matches": [
+        "https://calendar.google.com/*"
+      ]
     }
   ]
 }
