@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Calendar page -->
+  <rect x="8" y="16" width="96" height="100" rx="18" fill="#ffffff" stroke="#1d4ed8" stroke-width="6"/>
+  <path d="M8 34a18 18 0 0 1 18-18h60a18 18 0 0 1 18 18v14H8z" fill="#2563eb" stroke="#1d4ed8" stroke-width="6" stroke-linejoin="round"/>
+  <rect x="30" y="6" width="10" height="24" rx="5" fill="#1e3a8a"/>
+  <rect x="72" y="6" width="10" height="24" rx="5" fill="#1e3a8a"/>
+  <g fill="#bfdbfe">
+    <rect x="22" y="60" width="16" height="14" rx="4"/>
+    <rect x="22" y="84" width="16" height="14" rx="4"/>
+  </g>
+  <!-- Map pin -->
+  <path d="M88 124C88 124 58 98 58 74a30 30 0 1 1 60 0c0 24-30 50-30 50z" fill="#ef4444" stroke="#ffffff" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="88" cy="74" r="11" fill="#ffffff"/>
+</svg>
