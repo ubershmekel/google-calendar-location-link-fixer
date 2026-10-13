@@ -1,2 +1,7 @@
 example_html.html
 google-calendar-location-link-fixer.zip
+node_modules
+/build
+
+# Store credentials for `npm run ext:release`
+.env

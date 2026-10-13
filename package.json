@@ -1,0 +1,19 @@
+{
+  "name": "google-calendar-location-link-fixer",
+  "private": true,
+  "description": "Adds buttons to Google Calendar event locations to open in Google Maps or copy the address.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test",
+    "ext:package": "node ./scripts/package-extension.js",
+    "ext:package:firefox": "node ./scripts/package-extension.js firefox",
+    "ext:package:all": "node ./scripts/package-extension.js all",
+    "ext:firefox:run": "npm run ext:package:firefox && web-ext run --source-dir build/firefox-extension",
+    "ext:release": "node ./scripts/release-extension.js",
+    "ext:release:dry": "node ./scripts/release-extension.js --dry-run"
+  },
+  "devDependencies": {
+    "chrome-webstore-upload-cli": "^3.5.0",
+    "web-ext": "^10.6.0"
+  }
+}
