@@ -2,6 +2,15 @@
   "summary": {
     "en-US": "Adds buttons to Google Calendar event locations to open in Google Maps or copy the address."
   },
+  "description": {
+    "en-US": "Google Calendar's event popup shows the location as plain text that opens a sidebar when clicked. This add-on adds two small buttons next to it:\n\n- ↗️ opens the location in Google Maps in a new tab. If the location is itself a link, it opens that link directly.\n- 📋 copies the location to the clipboard.\n\nIt runs only on calendar.google.com, collects no data and makes no network requests.\n\nSource code: https://github.com/ubershmekel/google-calendar-location-link-fixer"
+  },
+  "homepage": {
+    "en-US": "https://github.com/ubershmekel/google-calendar-location-link-fixer"
+  },
+  "support_url": {
+    "en-US": "https://github.com/ubershmekel/google-calendar-location-link-fixer/issues"
+  },
   "categories": {
     "firefox": ["other"]
   },

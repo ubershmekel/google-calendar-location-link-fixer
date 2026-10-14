@@ -1,0 +1,389 @@
+<!doctype html>
+<!-- Store screenshot mock. Not Google Calendar: a look-alike page that runs the
+     real content.js so the buttons are the ones the extension actually adds.
+     Rendered by render.js; open with ?shot=1 or ?shot=2 to preview. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Screenshot mock</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 900px;
+        overflow: hidden;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #1f2937;
+      }
+      body {
+        background: linear-gradient(160deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
+      }
+      .headline {
+        position: absolute;
+        left: 64px;
+        top: 44px;
+        right: 64px;
+        color: #fff;
+      }
+      .headline h1 {
+        margin: 0;
+        font-size: 46px;
+        line-height: 1.15;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .headline p {
+        margin: 10px 0 0;
+        font-size: 23px;
+        color: #dbeafe;
+      }
+      .headline img {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 92px;
+        height: 92px;
+      }
+
+      /* Browser-ish window holding the calendar */
+      .window {
+        position: absolute;
+        left: 64px;
+        right: 64px;
+        top: 196px;
+        bottom: -24px;
+        background: #fff;
+        border-radius: 18px 18px 0 0;
+        box-shadow: 0 30px 80px rgba(15, 23, 42, 0.45);
+        overflow: hidden;
+      }
+      .appbar {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 0 26px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 24px;
+        color: #374151;
+      }
+      .appbar .today {
+        font-size: 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 999px;
+        padding: 7px 18px;
+      }
+      .appbar .month {
+        font-size: 22px;
+      }
+      .grid {
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: grid;
+        grid-template-columns: 70px repeat(5, 1fr);
+      }
+      .col {
+        border-left: 1px solid #e5e7eb;
+        position: relative;
+        background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+        background-size: 100% 72px;
+        background-position: 0 86px;
+      }
+      .col.times {
+        border-left: 0;
+        background: none;
+      }
+      .col .day {
+        height: 86px;
+        text-align: center;
+        padding-top: 12px;
+        font-size: 13px;
+        letter-spacing: 0.8px;
+        color: #6b7280;
+        background: #fff;
+      }
+      .col .day b {
+        display: block;
+        font-size: 28px;
+        font-weight: 400;
+        color: #374151;
+        letter-spacing: 0;
+      }
+      .col .day.now b {
+        margin: 2px auto 0;
+        width: 46px;
+        height: 46px;
+        line-height: 46px;
+        border-radius: 50%;
+        background: #2563eb;
+        color: #fff;
+      }
+      .time {
+        position: absolute;
+        right: 10px;
+        font-size: 12px;
+        color: #6b7280;
+      }
+      .event {
+        position: absolute;
+        left: 6px;
+        right: 12px;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 14px;
+        color: #fff;
+        background: #60a5fa;
+        line-height: 1.3;
+      }
+      .event.green {
+        background: #34a877;
+      }
+      .event.picked {
+        background: #e0633f;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.35);
+      }
+      .event.purple {
+        background: #8b7fd6;
+      }
+
+      /* Event details popup */
+      .popup {
+        position: absolute;
+        left: 312px;
+        top: 96px;
+        width: 360px;
+        zoom: 1.55;
+        background: #f3f6fc;
+        border-radius: 22px;
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.38);
+        padding: 10px 14px 20px 20px;
+        font-size: 14px;
+        color: #1f2937;
+      }
+      .popup .tools {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        color: #4b5563;
+        font-size: 17px;
+        padding: 4px 6px 6px;
+      }
+      .row {
+        display: flex;
+        gap: 16px;
+        padding: 7px 0;
+        align-items: flex-start;
+      }
+      .row .icon {
+        width: 22px;
+        flex: none;
+        text-align: center;
+        color: #4b5563;
+      }
+      .row .swatch {
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        background: #e0633f;
+        margin: 8px 4px 0;
+        flex: none;
+      }
+      .title {
+        font-size: 22px;
+        line-height: 1.25;
+      }
+      .when {
+        color: #374151;
+        margin-top: 3px;
+      }
+      .muted {
+        color: #4b5563;
+      }
+      /* Calendar keeps the "Location:" label for screen readers only. */
+      .sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
+      [data-text] a {
+        color: #1a56db;
+        word-break: break-all;
+      }
+
+      /* Callouts */
+      #callouts {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1200px;
+        height: 900px;
+        pointer-events: none;
+      }
+      .label {
+        position: absolute;
+        background: #111827;
+        color: #fff;
+        font-size: 21px;
+        font-weight: 600;
+        padding: 10px 18px;
+        border-radius: 12px;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.35);
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="headline">
+      <img src="../../icon128.png" alt="" />
+      <h1 id="h1"></h1>
+      <p id="sub"></p>
+    </div>
+
+    <div class="window">
+      <div class="appbar">
+        <span>☰</span><span>Calendar</span><span class="today">Today</span
+        ><span>‹ ›</span><span class="month">October 2026</span>
+      </div>
+      <div class="grid">
+        <div class="col times">
+          <span class="time" style="top: 150px">10 AM</span>
+          <span class="time" style="top: 222px">11 AM</span>
+          <span class="time" style="top: 294px">12 PM</span>
+          <span class="time" style="top: 366px">1 PM</span>
+          <span class="time" style="top: 438px">2 PM</span>
+          <span class="time" style="top: 510px">3 PM</span>
+          <span class="time" style="top: 582px">4 PM</span>
+        </div>
+        <div class="col">
+          <div class="day">MON<b>12</b></div>
+          <div class="event" style="top: 158px; height: 66px">Team sync<br />10 – 11am</div>
+          <div class="event green" style="top: 446px; height: 138px">Dentist<br />2 – 4pm</div>
+        </div>
+        <div class="col">
+          <div class="day now">TUE<b>13</b></div>
+          <div class="event picked" id="picked" style="top: 446px; height: 102px"></div>
+        </div>
+        <div class="col">
+          <div class="day">WED<b>14</b></div>
+          <div class="event purple" style="top: 230px; height: 66px">Design review</div>
+        </div>
+        <div class="col">
+          <div class="day">THU<b>15</b></div>
+          <div class="event" style="top: 158px; height: 66px">Team sync</div>
+          <div class="event green" style="top: 518px; height: 66px">School pickup</div>
+        </div>
+        <div class="col">
+          <div class="day">FRI<b>16</b></div>
+          <div class="event purple" style="top: 374px; height: 138px">Flight to Lisbon</div>
+        </div>
+      </div>
+      <div id="popup-slot"></div>
+    </div>
+
+    <svg id="callouts" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="tip" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M0 0L10 5L0 10z" fill="#111827" />
+        </marker>
+      </defs>
+    </svg>
+    <div id="labels"></div>
+
+    <script src="../../content.js"></script>
+    <script>
+      const shots = {
+        1: {
+          h1: "Open event locations in Google Maps",
+          sub: "Two buttons on every event: open the map, or copy the address.",
+          title: "Lunch with Sam",
+          when: "Tuesday, October 13  ·  2:00 – 3:30pm",
+          location: "Tartine Bakery, 600 Guerrero St, San Francisco, CA 94110",
+          labels: [
+            { text: "Open in Google Maps", side: "left" },
+            { text: "Copy the address", side: "right" },
+          ],
+        },
+        2: {
+          h1: "Link locations open directly",
+          sub: "When the location is a URL, it becomes a real link. No sidebar, no searching.",
+          title: "Hike at Lands End",
+          when: "Tuesday, October 13  ·  2:00 – 3:30pm",
+          location: "https://maps.app.goo.gl/WsQBN96swxzgx19t8",
+          labels: [
+            { text: "Opens the link itself", side: "left" },
+            { text: "Copy the link", side: "right" },
+          ],
+        },
+      };
+      const shot = shots[new URLSearchParams(location.search).get("shot") || 1];
+      document.getElementById("h1").textContent = shot.h1;
+      document.getElementById("sub").textContent = shot.sub;
+      document.getElementById("picked").textContent = shot.title;
+
+      // Calendar adds the popup after page load, which is what content.js
+      // watches for. Wait out its 200ms throttle first.
+      setTimeout(() => {
+        const popup = document.createElement("div");
+        popup.className = "popup";
+        popup.innerHTML = `
+          <div class="tools"><span>✎</span><span>🗑</span><span>✉</span><span>⋮</span><span>✕</span></div>
+          <div class="row"><div class="swatch"></div>
+            <div><div class="title"></div><div class="when"></div></div></div>
+          <div class="row"><div class="icon">📍</div>
+            <div data-text=""><span class="sr">Location: </span><span class="loc"></span></div></div>
+          <div class="row muted"><div class="icon">🔔</div><div>30 minutes before</div></div>
+          <div class="row muted"><div class="icon">📅</div><div>Personal</div></div>`;
+        popup.querySelector(".title").textContent = shot.title;
+        popup.querySelector(".when").textContent = shot.when;
+        popup.querySelector("[data-text]").setAttribute("data-text", shot.location);
+        popup.querySelector(".loc").textContent = shot.location;
+        document.getElementById("popup-slot").appendChild(popup);
+      }, 300);
+
+      // Once content.js has added its buttons, point a label at each one.
+      const wait = setInterval(() => {
+        const buttons = document.querySelectorAll(".gcllf-buttons-added");
+        if (buttons.length < 2) return;
+        clearInterval(wait);
+        const svg = document.getElementById("callouts");
+        const popup = document.querySelector(".popup");
+        buttons.forEach((button, i) => {
+          const r = button.getBoundingClientRect();
+          const cy = r.top + r.height / 2;
+          const { text, side } = shot.labels[i];
+          const label = document.createElement("div");
+          label.className = "label";
+          label.textContent = text;
+          document.getElementById("labels").appendChild(label);
+          // The first label sits out over the calendar grid, the second in
+          // the empty space to the right of the buttons.
+          const popupLeft = popup.getBoundingClientRect().left;
+          const width = label.offsetWidth;
+          const left = side === "left" ? popupLeft - width - 14 : r.right + 70;
+          label.style.left = left + "px";
+          label.style.top = cy - label.offsetHeight / 2 + "px";
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          const from = side === "left" ? left + width : left;
+          const to = side === "left" ? r.left - 10 : r.right + 10;
+          path.setAttribute("d", `M${from} ${cy} L${to} ${cy}`);
+          path.setAttribute("fill", "none");
+          path.setAttribute("stroke", "#111827");
+          path.setAttribute("stroke-width", "4");
+          path.setAttribute("stroke-linecap", "round");
+          path.setAttribute("marker-end", "url(#tip)");
+          svg.appendChild(path);
+        });
+        document.body.dataset.ready = "1";
+      }, 50);
+    </script>
+  </body>
+</html>
